@@ -11,6 +11,11 @@ const GUARD_HELPER = `function __guard__(value, transform) {
 
 export default class SoakedSlicePatcher extends SlicePatcher {
   patchAsExpression(): void {
+    if (this.shouldPatchAsOptionalChaining()) {
+      super.patchAsExpression();
+      return;
+    }
+
     this.registerHelper('__guard__', GUARD_HELPER);
     this.addSuggestion(REMOVE_GUARD);
 
@@ -34,6 +39,9 @@ export default class SoakedSlicePatcher extends SlicePatcher {
    * For a soaked splice operation, we are the soak container.
    */
   getSpliceCode(expressionCode: string): string {
+    if (this.shouldPatchAsOptionalChaining()) {
+      return super.getSpliceCode(expressionCode);
+    }
     const spliceStart = this.captureCodeForPatchOperation(() => {
       this.registerHelper('__guard__', GUARD_HELPER);
       this.addSuggestion(REMOVE_GUARD);
@@ -42,5 +50,9 @@ export default class SoakedSlicePatcher extends SlicePatcher {
       this.patchAsSpliceExpressionStart();
     });
     return `__guard__(${spliceStart}, ...[].concat(${expressionCode})))`;
+  }
+
+  shouldPatchAsOptionalChaining(): boolean {
+    return this.options.useOptionalChaining || false;
   }
 }
