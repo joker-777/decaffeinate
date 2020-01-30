@@ -69,7 +69,7 @@ export default class SoakedFunctionApplicationPatcher extends FunctionApplicatio
   }
 
   patchAsOptionalChaining(): void {
-    let callStartToken = this.getCallStartToken();
+    const callStartToken = this.getCallStartToken();
     // `a?(b)` → `a?.(b)`
     //              ^
     this.insert(callStartToken.start, '.');

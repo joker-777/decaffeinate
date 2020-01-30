@@ -50,7 +50,7 @@ export default class SlicePatcher extends NodePatcher {
     const indexStart = this.getIndexStartSourceToken();
     // `a[0..1]` → `a.slice(0..1]`
     //   ^           ^^^^^^^
-    let dot = this.shouldPatchAsOptionalChaining() ? '?.' : '.';
+    const dot = this.shouldPatchAsOptionalChaining() ? '?.' : '.';
     this.overwrite(this.expression.outerEnd, indexStart.end, `${dot}slice(`);
     if (this.left) {
       this.left.patch();
@@ -123,7 +123,7 @@ export default class SlicePatcher extends NodePatcher {
     const indexStart = this.getIndexStartSourceToken();
     // `a[b..c]` → `a.splice(b..c]`
     //   ^           ^^^^^^^^
-    let dot = this.shouldPatchAsOptionalChaining() ? '?.' : '.';
+    const dot = this.shouldPatchAsOptionalChaining() ? '?.' : '.';
     this.overwrite(this.expression.outerEnd, indexStart.end, `${dot}splice(`);
     let leftCode;
     if (this.left) {
